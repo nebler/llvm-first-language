@@ -76,7 +76,7 @@ using namespace llvm::sys;
 Value *LogErrorV(const char *Str);
 /// BinopPrecedence - This holds the precedence for each binary operator that is
 /// defined.
-static std::map<char, int> BinopPrecedence;
+std::map<char, int> BinopPrecedence;
 //===----------------------------------------------------------------------===//
 // Lexer
 //===----------------------------------------------------------------------===//
@@ -967,7 +967,7 @@ static std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec,
     // If this is a binop, find its precedence.
     while (true)
     {
-        int TokPrec = GetTokPrecedence(BinopPrecedence);
+        int TokPrec = GetTokPrecedence(&BinopPrecedence);
 
         // If this is a binop that binds at least as tightly as the current binop,
         // consume it, otherwise we are done.
@@ -984,7 +984,7 @@ static std::unique_ptr<ExprAST> ParseBinOpRHS(int ExprPrec,
             return nullptr;
         // If BinOp binds less tightly with RHS than the operator after RHS, let
         // the pending operator take RHS as its LHS.
-        int NextPrec = GetTokPrecedence(BinopPrecedence);
+        int NextPrec = GetTokPrecedence(&BinopPrecedence);
         if (TokPrec < NextPrec)
         {
             RHS = ParseBinOpRHS(TokPrec + 1, std::move(RHS));

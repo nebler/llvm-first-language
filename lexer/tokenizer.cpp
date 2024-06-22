@@ -1,8 +1,14 @@
 #include "tokenizer.h"
 #include <string>
+#include <map>
+
+// Declare the global variables used by gettok
+std::string IdentifierStr; // Filled in if tok_identifier
+double NumVal;             // Filled in if tok_number
+int CurTok;
 
 /// gettok - Return the next token from standard input.
-static int gettok()
+int gettok()
 {
     static int LastChar = ' ';
 
@@ -73,16 +79,16 @@ static int gettok()
     return ThisChar;
 }
 
-static int getNextToken() { return CurTok = gettok(); }
+int getNextToken() { return CurTok = gettok(); }
 
 /// GetTokPrecedence - Get the precedence of the pending binary operator token.
-static int GetTokPrecedence(std::map<char, int> BinopPrecedence)
+int GetTokPrecedence(std::map<char, int> *BinopPrecedence)
 {
     if (!isascii(CurTok))
         return -1;
 
     // Make sure it's a declared binop.
-    int TokPrec = BinopPrecedence[CurTok];
+    int TokPrec = (*BinopPrecedence)[CurTok];
     if (TokPrec <= 0)
         return -1;
     return TokPrec;
